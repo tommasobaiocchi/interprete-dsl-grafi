@@ -5,9 +5,7 @@ from lark import Lark, Token, Tree
 import networkx as nx
 import matplotlib.pyplot as plt
 
-# =============================================================================
-# 1. DOMINI
-# =============================================================================
+# 1 DOMINI
 
 Nodo = Union[int, str]
 Arco = Tuple[Nodo, Nodo]
@@ -50,9 +48,7 @@ class State:
     next_loc: int
 
 
-# =============================================================================
-# 2. STATO E MEMORIA
-# =============================================================================
+# 2 STATO E MEMORIA
 
 def empty_store_impl(loc: int) -> MVal:
     raise ValueError(f"Accesso a locazione non allocata: @{loc}")
@@ -79,9 +75,7 @@ def deref(state: State, loc: Loc) -> MVal:
     return state.store(loc.address)
 
 
-# =============================================================================
-# 3. OPERAZIONI GRAFICI
-# =============================================================================
+# 3 OPERAZIONI GRAFICI
 
 def grafo_op(archi_list: List[Arco]) -> GrafoVal:
     nodi = set()
@@ -100,9 +94,7 @@ def unione_op(a: GrafoVal, b: GrafoVal) -> GrafoVal:
     return GrafoVal(a.nodi | b.nodi, a.archi | b.archi)
 
 
-# =============================================================================
-# 4. AST
-# =============================================================================
+# 4 AST
 
 @dataclass(frozen=True)
 class ArcoLit:
@@ -166,9 +158,7 @@ class CmdBlock:
     commands: List[Cmd]
 
 
-# =============================================================================
-# 5. PARSER (LARK)
-# =============================================================================
+# 5 PARSER (LARK)
 
 grammar = r"""
     ?start: block
@@ -211,9 +201,7 @@ grammar = r"""
 
 parser = Lark(grammar, parser="lalr")
 
-# =============================================================================
-# 6. TRASFORMATORE
-# =============================================================================
+# 6 TRASFORMATORE
 
 def transform(t: Tree | Token) -> Any:
     if isinstance(t, Token):
@@ -274,7 +262,7 @@ def transform(t: Tree | Token) -> Any:
         op_map = {'add':'+', 'sub':'-', 'mul':'*', 'div':'/', 'lt':'<', 'eq':'=='}
         return FunCall(op_map[rule], [children[0], children[1]])
 
-    # Operazioni grafiche - FIX APPLICATI
+    # Operazioni grafiche
     if rule == 'unione':
         return FunCall("unione", [children[0], children[1]])
 
@@ -284,7 +272,7 @@ def transform(t: Tree | Token) -> Any:
     if rule == 'arco':
         return ArcoLit(children[0], children[1])
 
-    # Lista - FIX APPLICATI
+    # Lista
     if rule == 'lista':
         return ListaLit(children)
 
@@ -307,9 +295,7 @@ def transform(t: Tree | Token) -> Any:
     raise ValueError(f"Regola sconosciuta nel trasformatore: {rule}")
 
 
-# =============================================================================
-# 7. AMBIENTE E VALUTATORE
-# =============================================================================
+# 7 AMBIENTE E VALUTATORE
 
 def empty_env(name: str) -> DVal:
     raise NameError(f"Variabile non definita: {name}")
@@ -383,9 +369,7 @@ def eval_expr(expr: Expr, env: Environment, state: State) -> EVal:
             raise NotImplementedError(f"Expr non gestita: {expr}")
 
 
-# =============================================================================
-# 8. ESECUTORE
-# =============================================================================
+# 8 ESECUTORE
 
 image_counter = 0
 
@@ -449,9 +433,7 @@ def exec_block(block: CmdBlock, env: Environment, state: State):
     return curr_env, curr_state
 
 
-# =============================================================================
-# 9. REPL
-# =============================================================================
+# 9 REPL
 
 def repl():
     print("=== REPL - DSL Grafi ===")
@@ -488,3 +470,4 @@ def repl():
 if __name__ == "__main__":
 
     repl()
+
