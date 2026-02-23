@@ -1,7 +1,3 @@
-"""
-finale_grafi.py
-"""
-
 from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import Union, List, FrozenSet, Tuple, Callable, Any
@@ -490,4 +486,5 @@ def repl():
             print(f"Errore: {e}")
 
 if __name__ == "__main__":
+
     repl()
